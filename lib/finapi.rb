@@ -4,7 +4,7 @@ require "faraday"
 
 require "finapi/version"
 require "finapi/session"
-require "finapi/transactions"
+require "finapi/resources"
 
 module FinAPI
 end

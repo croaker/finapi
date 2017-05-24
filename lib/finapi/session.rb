@@ -14,6 +14,22 @@ module FinAPI
 
     attr_reader :http_client
 
+    def method_missing(method_name, *args, &block)
+      if endpoints.include?(method_name)
+        FinAPI::Resources.new(method_name, http_client)
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(method_name, _include_private = false)
+      endpoints.include?(method_name) || super
+    end
+
+    def endpoints
+      %i[transactions]
+    end
+
     def default_client
       Faraday.new("https://sandbox.finapi.io")
     end
