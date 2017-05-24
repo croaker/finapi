@@ -8,9 +8,9 @@ module FinAPI
     end
 
     def find(id)
-      http_client.get(single_resource_uri(id))
+      data = http_client.get(single_resource_uri(id))
 
-      Entity.new
+      Entity.new(JSON.parse(data || "{}"))
     end
 
     private

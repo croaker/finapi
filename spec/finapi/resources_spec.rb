@@ -31,6 +31,17 @@ module FinAPI
 
         expect(transactions.find(123)).to be_instance_of(FinAPI::Entity)
       end
+
+      it "returns the requested resource" do
+        http_client = double("http_client")
+        transactions = FinAPI::Resources.new(:transactions, http_client)
+
+        expect(http_client).to receive(:get)
+          .with("/api/v1/transactions/123")
+          .and_return(File.read("spec/fixtures/transaction.json"))
+
+        expect(transactions.find(123).id).to eq(21271018)
+      end
     end
   end
 end
