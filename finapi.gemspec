@@ -2,12 +2,11 @@
 
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-# require 'finapi_client/version'
+require 'finapi/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "finapi_client"
-  spec.version       = "0.0.0"
-  # spec.version       = FinAPIClient::VERSION
+  spec.name          = "finapi"
+  spec.version       = FinAPI::VERSION
   spec.authors       = ["croaker"]
   spec.summary       = "A simple client for the finapi.io API"
   spec.description   = "A simple client for the finapi.io API"
@@ -17,6 +16,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "faraday", "~> 0.12"
 
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake"
