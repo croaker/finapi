@@ -8,7 +8,7 @@ module FinAPI
     end
 
     def find(id)
-      data = http_client.get(single_resource_uri(id))
+      data = http_client.get(specific_resource_path(id))
 
       Entity.new(JSON.parse(data.body || "{}"))
     end
@@ -17,7 +17,7 @@ module FinAPI
 
     attr_reader :endpoint, :http_client
 
-    def single_resource_uri(id)
+    def specific_resource_path(id)
       "/api/v1/#{endpoint}/#{id}"
     end
   end
