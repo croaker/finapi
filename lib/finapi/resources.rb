@@ -10,7 +10,7 @@ module FinAPI
     def find(id)
       data = http_client.get(single_resource_uri(id))
 
-      Entity.new(JSON.parse(data || "{}"))
+      Entity.new(JSON.parse(data.body || "{}"))
     end
 
     private
