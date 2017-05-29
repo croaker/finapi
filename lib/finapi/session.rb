@@ -3,6 +3,7 @@
 module FinAPI
   class Session
     def initialize(api_token, http_client = nil)
+      @api_token = api_token
       @http_client = http_client || default_client
     end
 
@@ -12,7 +13,7 @@ module FinAPI
 
     private
 
-    attr_reader :http_client
+    attr_reader :api_token, :http_client
 
     def method_missing(method_name, *args, &block)
       if endpoints.include?(method_name)
@@ -31,7 +32,11 @@ module FinAPI
     end
 
     def default_client
-      Faraday.new("https://sandbox.finapi.io")
+      # No idea wheter the tap is really necessary, passing just the block
+      # fails for the authorization though
+      Faraday.new(url: "https://sandbox.finapi.io").tap do |conn|
+        conn.authorization :Bearer, api_token
+      end
     end
   end
 end
