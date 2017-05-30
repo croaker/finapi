@@ -20,25 +20,6 @@ module FinAPI
 
           session.get("/test")
         end
-
-        it "initializes faraday as the default client with the default url" do
-          default_url = "https://sandbox.finapi.io"
-
-          expect(Faraday).to receive(:new).with(url: default_url) { spy }
-
-          FinAPI::Session.new("api_token")
-        end
-
-        it "initializes faraday with the provided api token" do
-          default_url = "https://sandbox.finapi.io"
-          connection = double("Faraday::Connection")
-          allow(Faraday).to receive(:new).with(url: default_url) { connection }
-
-          expect(connection)
-            .to receive(:authorization).with(:Bearer, "api_token")
-
-          FinAPI::Session.new("api_token")
-        end
       end
     end
   end

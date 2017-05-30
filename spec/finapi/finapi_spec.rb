@@ -8,6 +8,20 @@ module FinAPI
       expect(FinAPI::VERSION).not_to eq(nil)
     end
 
+    describe "finapi.io integration" do
+      it "uses a default client with authorization headers" do
+        transaction_url = "https://sandbox.finapi.io/api/v1/transactions/123"
+        stub = stub_request(:get, transaction_url)
+                 .with(headers: { "Authorization" => "Bearer api_token" })
+                 .and_return(status: 200, body: '{}')
+
+        session = FinAPI::Session.new("api_token")
+        session.transactions.find(123)
+
+        expect(stub).to have_been_requested
+      end
+    end
+
     describe "Resource instatiation" do
       it "instantiates a new resource from any method call" do
         http_client = double("http_client")
