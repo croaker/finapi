@@ -46,5 +46,42 @@ module FinAPI
         end
       end
     end
+
+    describe "#parse_response" do
+      it "returns the parsed response.body" do
+        response_body = File.read("./spec/fixtures/transaction.json")
+        parsed_response = JSON.parse(response_body)
+        response = double("response", body: response_body)
+        resource = FinAPI::Resources.new(:test, nil)
+
+        expect(resource.parse_response(response)).to eq(parsed_response)
+      end
+
+      context "malformed responses" do
+        it "returns an empty hash on NoMethodError" do
+          response = {}
+          resource = FinAPI::Resources.new(:test, nil)
+
+          expect{ response.body }.to raise_error(NoMethodError)
+          expect(resource.parse_response(response)).to eq({})
+        end
+
+        it "returns an empty hash on TypeError" do
+          response = double("response", body: nil)
+          resource = FinAPI::Resources.new(:test, nil)
+
+          expect{ JSON.parse(response.body) }.to raise_error(TypeError)
+          expect(resource.parse_response(response)).to eq({})
+        end
+
+        it "returns an empty hash on JSON::ParserError" do
+          response = double("response", body: "")
+          resource = FinAPI::Resources.new(:test, nil)
+
+          expect{ JSON.parse(response.body) }.to raise_error(JSON::ParserError)
+          expect(resource.parse_response(response)).to eq({})
+        end
+      end
+    end
   end
 end
