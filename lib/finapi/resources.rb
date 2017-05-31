@@ -13,9 +13,11 @@ module FinAPI
       Entity.new(parse_response(response))
     end
 
-    private
+    def all
+      response = session.get(collection_resource_path)
 
-    attr_reader :endpoint, :session
+      EntityCollection.new(parse_response(response), endpoint)
+    end
 
     def parse_response(response)
       JSON.parse(response.body)
@@ -23,8 +25,20 @@ module FinAPI
       {}
     end
 
+    private
+
+    attr_reader :endpoint, :session
+
     def specific_resource_path(id)
-      "/api/v1/#{endpoint}/#{id}"
+      "#{endpoint_path}/#{id}"
+    end
+
+    def collection_resource_path
+      endpoint_path
+    end
+
+    def endpoint_path
+      "/api/v1/#{endpoint}"
     end
   end
 end

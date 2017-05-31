@@ -47,6 +47,40 @@ module FinAPI
       end
     end
 
+    describe "#all" do
+      it "requests from the collection path" do
+        session = double("session")
+        response = double("response", body: nil)
+        transactions = FinAPI::Resources.new(:transactions, session)
+        expect(session)
+          .to receive(:get).with("/api/v1/transactions") { response }
+
+        transactions.all
+      end
+
+      it "wraps the collection in an EnumberableEntity" do
+        session = double("session")
+        response = double("response", body: nil)
+        transactions = FinAPI::Resources.new(:transactions, session)
+        allow(session)
+          .to receive(:get).with("/api/v1/transactions") { response }
+
+        expect(transactions.all).to be_instance_of(FinAPI::EntityCollection)
+      end
+
+      it "returns a collection of items" do
+        session = double("session")
+        transactions = FinAPI::Resources.new(:transactions, session)
+        response = double("response",
+                          body: File.read("./spec/fixtures/transactions.json"))
+
+        allow(session)
+          .to receive(:get).with(any_args) { response }
+
+        expect(transactions.all.total_items).to eq(20)
+      end
+    end
+
     describe "#parse_response" do
       it "returns the parsed response.body" do
         response_body = File.read("./spec/fixtures/transaction.json")
