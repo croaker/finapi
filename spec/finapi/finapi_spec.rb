@@ -8,24 +8,21 @@ module FinAPI
       expect(FinAPI::VERSION).not_to eq(nil)
     end
 
-    describe "finapi.io integration" do
-      it "uses a default client with authorization headers" do
-        transaction_url = "https://sandbox.finapi.io/api/v1/transactions/123"
-        stub = stub_request(:get, transaction_url)
-                 .with(headers: { "Authorization" => "Bearer api_token" })
-                 .and_return(status: 200, body: '{}')
+    describe "default http client" do
+      it "uses connects with provided api key in authorization headers" do
+        stub = stub_request(:get, "https://sandbox.finapi.io/123")
+                 .with(headers: { "Authorization" => "Bearer Secret Token" })
 
-        session = FinAPI::Session.new("api_token")
-        session.transactions.find(123)
+        session = FinAPI::Session.new("Secret Token")
+        session.get("/123")
 
         expect(stub).to have_been_requested
       end
     end
 
-    describe "Resource instatiation" do
+    describe "Session and Resources interaction" do
       it "instantiates a new resource from any method call" do
-        http_client = double("http_client")
-        session = FinAPI::Session.new("api_token", http_client)
+        session = FinAPI::Session.new("api_token")
 
         expect(FinAPI::Resources).to receive(:new).with(any_args)
 
@@ -33,8 +30,7 @@ module FinAPI
       end
 
       it "derives the endpoint from the method name" do
-        http_client = double("http_client")
-        session = FinAPI::Session.new("api_token", http_client)
+        session = FinAPI::Session.new("api_token")
 
         expect(FinAPI::Resources).to receive(:new).with(:transactions,
                                                         *any_args)
@@ -42,19 +38,17 @@ module FinAPI
         session.transactions
       end
 
-      it "passes the sessions http_client" do
-        http_client = double("http_client")
-        session = FinAPI::Session.new("api_token", http_client)
+      it "passes the session" do
+        session = FinAPI::Session.new("api_token")
 
         expect(FinAPI::Resources).to receive(:new).with(:transactions,
-                                                        http_client)
+                                                        session)
 
         session.transactions
       end
 
       it "only accepts known resources" do
-        http_client = double("http_client")
-        session = FinAPI::Session.new("api_token", http_client)
+        session = FinAPI::Session.new("api_token")
 
         expect {
           session.hulahula

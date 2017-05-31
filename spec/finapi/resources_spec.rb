@@ -5,28 +5,28 @@ require "spec_helper"
 module FinAPI
   RSpec.describe Resources do
     describe "#find" do
-      let(:http_client) { double("http_client") }
-      let(:transactions) { FinAPI::Resources.new(:transactions, http_client) }
+      let(:session) { double("session") }
+      let(:transactions) { FinAPI::Resources.new(:transactions, session) }
 
       context "with an arbitrary response" do
         let(:response) { double("response", body: nil) }
 
         it "can receive a specific item by id" do
-          expect(http_client)
+          expect(session)
             .to receive(:get).with(any_args) { response }
 
           transactions.find(123)
         end
 
         it "requests with the correct path" do
-          expect(http_client)
+          expect(session)
             .to receive(:get).with("/api/v1/transactions/123") { response }
 
           transactions.find(123)
         end
 
         it "wraps the resource in an entity" do
-          allow(http_client)
+          allow(session)
             .to receive(:get).with("/api/v1/transactions/123") { response }
 
           expect(transactions.find(123)).to be_instance_of(FinAPI::Entity)
@@ -38,7 +38,7 @@ module FinAPI
           response = double("response",
                             body: File.read("./spec/fixtures/transaction.json"))
 
-          expect(http_client).to receive(:get)
+          allow(session).to receive(:get)
             .with("/api/v1/transactions/123")
             .and_return(response)
 

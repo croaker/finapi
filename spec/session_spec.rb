@@ -21,6 +21,35 @@ module FinAPI
           session.get("/test")
         end
       end
+
+      describe "#get" do
+        it "delegates to the http_client" do
+          http_client = double("http_client")
+          session = FinAPI::Session.new("api_token", http_client)
+
+          expect(http_client).to receive(:get)
+
+          session.get("/test")
+        end
+
+        it "passes the url to the http_client" do
+          http_client = double("http_client")
+          session = FinAPI::Session.new("api_token", http_client)
+
+          expect(http_client).to receive(:get).with("/test")
+
+          session.get("/test")
+        end
+
+        it "passes any other param to the http_client" do
+          http_client = double("http_client")
+          session = FinAPI::Session.new("api_token", http_client)
+
+          expect(http_client).to receive(:get).with("/test", foo: "bar")
+
+          session.get("/test", foo: "bar")
+        end
+      end
     end
   end
 end

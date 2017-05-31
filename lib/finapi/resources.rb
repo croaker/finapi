@@ -2,20 +2,26 @@
 
 module FinAPI
   class Resources
-    def initialize(endpoint, http_client)
+    def initialize(endpoint, session)
       @endpoint = endpoint
-      @http_client = http_client
+      @session = session
     end
 
     def find(id)
-      data = http_client.get(specific_resource_path(id))
+      response = session.get(specific_resource_path(id))
 
-      Entity.new(JSON.parse(data.body || "{}"))
+      Entity.new(parse_response(response))
     end
 
     private
 
-    attr_reader :endpoint, :http_client
+    attr_reader :endpoint, :session
+
+    def parse_response(response)
+      JSON.parse(response.body)
+    rescue NoMethodError, TypeError, JSON::ParserError
+      {}
+    end
 
     def specific_resource_path(id)
       "/api/v1/#{endpoint}/#{id}"

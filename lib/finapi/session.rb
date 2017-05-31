@@ -7,8 +7,8 @@ module FinAPI
       @http_client = http_client || default_client
     end
 
-    def get(url)
-      http_client.get(url)
+    def get(*args)
+      http_client.get(*args)
     end
 
     private
@@ -17,7 +17,7 @@ module FinAPI
 
     def method_missing(method_name, *args, &block)
       if endpoints.include?(method_name)
-        FinAPI::Resources.new(method_name, http_client)
+        FinAPI::Resources.new(method_name, self)
       else
         super
       end
