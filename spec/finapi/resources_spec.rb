@@ -53,7 +53,7 @@ module FinAPI
         response = double("response", body: nil)
         transactions = FinAPI::Resources.new(:transactions, session)
         expect(session)
-          .to receive(:get).with("/api/v1/transactions") { response }
+          .to receive(:get).with("/api/v1/transactions", any_args) { response }
 
         transactions.all
       end
@@ -67,16 +67,62 @@ module FinAPI
         allow(session)
           .to receive(:get).with(any_args) { response }
 
-        expect(transactions.all.total_items).to eq(912)
+        expect(transactions.all.size).to eq(912)
       end
 
-      it "passes arguments to the session" do
+      it "passes the params to the session" do
         session = double("session")
         transactions = FinAPI::Resources.new(:test, session)
 
         expect(session).to receive(:get).with("/api/v1/test", foo: "bar")
 
         transactions.all(foo: "bar")
+      end
+
+      context "multiple api pages" do
+        let(:response1) {
+          double(
+            "response",
+            body: <<~JSON
+              {"test": [1,2],
+               "paging": { "page": 1,
+                           "pageCount": 2,
+                           "totalCount": 4 }}
+            JSON
+          )
+        }
+
+        let(:response2) {
+          double(
+            "response",
+            body: <<~JSON
+              {"test": [3,4],
+               "paging": { "page": 2,
+                           "pageCount": 2,
+                           "totalCount": 4 }}
+            JSON
+          )
+        }
+
+        it "iterates over the whole collection with multiple requests" do
+          session = double("session")
+          transactions = FinAPI::Resources.new(:test, session)
+
+          expect(session).to receive(:get).and_return(response1, response2)
+
+          transactions.all.to_a
+        end
+
+        it "keeps any previous parameters on subsequent requests" do
+          session = double("session")
+          transactions = FinAPI::Resources.new(:test, session)
+
+          expect(session).to receive(:get)
+            .with(any_args, hash_including(foo: "bar"))
+            .and_return(response1, response2)
+
+          transactions.all(foo: "bar").to_a
+        end
       end
     end
 
@@ -104,14 +150,6 @@ module FinAPI
           resource = FinAPI::Resources.new(:test, nil)
 
           expect{ JSON.parse(response.body) }.to raise_error(TypeError)
-          expect(resource.parse_response(response)).to eq({})
-        end
-
-        it "returns an empty hash on JSON::ParserError" do
-          response = double("response", body: "")
-          resource = FinAPI::Resources.new(:test, nil)
-
-          expect{ JSON.parse(response.body) }.to raise_error(JSON::ParserError)
           expect(resource.parse_response(response)).to eq({})
         end
       end
