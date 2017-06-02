@@ -13,8 +13,8 @@ module FinAPI
       Entity.new(parse_response(response))
     end
 
-    def all
-      response = session.get(collection_resource_path)
+    def all(*params)
+      response = session.get(collection_resource_path, *params)
 
       EntityCollection.new(parse_response(response), endpoint)
     end

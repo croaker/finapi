@@ -58,16 +58,6 @@ module FinAPI
         transactions.all
       end
 
-      it "wraps the collection in an EnumberableEntity" do
-        session = double("session")
-        response = double("response", body: nil)
-        transactions = FinAPI::Resources.new(:transactions, session)
-        allow(session)
-          .to receive(:get).with("/api/v1/transactions") { response }
-
-        expect(transactions.all).to be_instance_of(FinAPI::EntityCollection)
-      end
-
       it "returns a collection of items" do
         session = double("session")
         transactions = FinAPI::Resources.new(:transactions, session)
@@ -77,7 +67,16 @@ module FinAPI
         allow(session)
           .to receive(:get).with(any_args) { response }
 
-        expect(transactions.all.total_items).to eq(20)
+        expect(transactions.all.total_items).to eq(912)
+      end
+
+      it "passes arguments to the session" do
+        session = double("session")
+        transactions = FinAPI::Resources.new(:test, session)
+
+        expect(session).to receive(:get).with("/api/v1/test", foo: "bar")
+
+        transactions.all(foo: "bar")
       end
     end
 
