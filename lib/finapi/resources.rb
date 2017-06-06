@@ -22,7 +22,7 @@ module FinAPI
 
       Enumerator.new(size) do |yielder|
         loop do
-          data[endpoint.to_s].each { |item| yielder.yield item }
+          data[endpoint.to_s].each { |item| yielder.yield Entity.new(item) }
           raise StopIteration unless page < pages
 
           response = session.get(collection_resource_path,

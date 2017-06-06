@@ -70,6 +70,18 @@ module FinAPI
         expect(transactions.all.size).to eq(912)
       end
 
+      it "wraps the collections items in Entities" do
+        session = double("session")
+        transactions = FinAPI::Resources.new(:transactions, session)
+        response = double("response",
+                          body: File.read("./spec/fixtures/transactions.json"))
+
+        allow(session)
+          .to receive(:get).with(any_args) { response }
+
+        expect(transactions.all.first).to be_instance_of(FinAPI::Entity)
+      end
+
       it "passes the params to the session" do
         session = double("session")
         transactions = FinAPI::Resources.new(:test, session)
