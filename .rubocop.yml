@@ -1,0 +1,25 @@
+AllCops:
+  TargetRubyVersion: 2.4
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'spec/**/*.rb'
+Style/AsciiComments:
+  Enabled: false
+Style/BlockDelimiters:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented,indented_relative_to_receiver
+Style/NumericLiterals:
+  Enabled: false
+Style/RedundantSelf:
+  Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Layout/IndentHeredoc:
+  EnforcedStyle: squiggly
+Metrics/ClassLength:
+  Enabled: false
