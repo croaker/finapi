@@ -15,9 +15,7 @@ module FinAPI
       it "only responds to keys in the data" do
         entity = FinAPI::Entity.new({})
 
-        expect {
-          entity.id
-        }.to raise_error(NoMethodError)
+        expect(entity.respond_to?(:somekey)).to be_falsey
       end
 
       it "allows snake cased access to js-style camel case keys" do
