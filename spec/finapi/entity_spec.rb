@@ -19,7 +19,18 @@ module FinAPI
           entity.id
         }.to raise_error(NoMethodError)
       end
-    end
 
+      it "allows snake cased access to js-style camel case keys" do
+        entity = FinAPI::Entity.new({ "fooBar" => "123" })
+
+        expect(entity.foo_bar).to eq("123")
+      end
+
+      it "wraps nested hashes in an Entity" do
+        entity = FinAPI::Entity.new({ "foo" => { "bar" => "baz" } })
+
+        expect(entity.foo.bar).to eq("baz")
+      end
+    end
   end
 end
