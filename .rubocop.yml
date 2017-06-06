@@ -12,7 +12,7 @@ Style/BlockDelimiters:
 Style/Documentation:
   Enabled: false
 Style/MultilineMethodCallIndentation:
-  EnforcedStyle: indented,indented_relative_to_receiver
+  EnforcedStyle: indented_relative_to_receiver
 Style/NumericLiterals:
   Enabled: false
 Style/RedundantSelf:

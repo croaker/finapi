@@ -3,7 +3,6 @@
 require "faraday"
 require "json"
 
-
 require "finapi/entity"
 require "finapi/resources"
 require "finapi/session"

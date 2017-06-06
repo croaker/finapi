@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StringRefinements
   refine String do
     def camelize
