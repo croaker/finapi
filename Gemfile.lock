@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    finapi (0.1.0)
+    finapi (0.2.0)
       faraday (~> 0.12)
 
 GEM
